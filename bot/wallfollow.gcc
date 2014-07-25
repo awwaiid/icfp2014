@@ -1,0 +1,143 @@
+; WALL WALKER
+
+; Set up a test
+; LDC 17
+; LDC 23
+; LDC 34
+; LDC 0
+; CONS
+; CONS
+; CONS     ; (17 23 34)
+; LDC 1
+; LDF nth  ; (nth (17 23 34) 1)
+; AP 2
+; DBUG
+; RTN
+
+main:
+
+  LDC 1234
+  DBUG
+
+  LDC 0
+  LDF step
+  CONS
+
+  RTN
+
+step:
+  ; Load map
+  LD 0 1
+  LDF debug
+  AP 1
+  CAR
+
+
+  ; Load x of lambdaman
+  LD 0 1
+  CDR
+  CAR ; Lambdaman status
+  CDR
+  CAR ; Current location
+  CAR ; x
+
+  ;LDF debug
+  ;AP 1
+
+  ; Load y of lambdaman
+  LD 0 1
+  CDR
+  CAR ; Lambdaman status
+  CDR
+  CAR ; Current location
+  CDR ; y
+
+  ;LDF debug
+  ;AP 1
+
+  LDF getxy
+  AP 3
+
+  DBUG
+
+  LDC 0
+  LDC 1
+  CONS
+
+  RTN
+
+debug:
+  LD 0 0
+  DBUG
+  LD 0 0
+  RTN
+
+
+nth: ; a = array, x = offset
+  LD 0 1 ; x
+  SEL nth_notdone nth_done
+  RTN
+
+nth_notdone:
+  LD 0 0 ; a
+  CDR
+  LD 0 1 ; x
+  LDC 1
+  SUB
+  LDF nth
+  AP 2
+  JOIN
+
+nth_done:
+  LD 0 0 ; a
+  CAR
+  JOIN
+
+
+getxy: ; matrix x y
+  LD 0 0
+  LD 0 2
+  LDF nth
+  AP 2
+  LD 0 1
+  LDF nth
+  AP 2
+  RTN
+
+getabove:    ; matrix x y -> getxy x (y - 1)
+  LD 0 0
+  LD 0 1
+  LD 0 2
+  LDC 1
+  SUB
+  LDF getxy
+  AP 3
+
+getbelow:    ; matrix x y -> getxy x (y + 1)
+  LD 0 0
+  LD 0 1
+  LD 0 2
+  LDC 1
+  ADD
+  LDF getxy
+  AP 3
+
+getright:    ; matrix x y -> getxy (+ x 1) y
+  LD 0 0
+  LD 0 1
+  LDC 1
+  ADD
+  LD 0 2
+  LDF getxy
+  AP 3
+
+getleft:    ; matrix x y -> getxy (- x 1) y
+  LD 0 0
+  LD 0 1
+  LDC 1
+  SUB
+  LD 0 2
+  LDF getxy
+  AP 3
+
+
