@@ -9,7 +9,8 @@ while(my $line = <>) {
   chomp $line;
   $line =~ s/^\s+//;
   $line =~ s/\s*;.*$//;
-  if($line =~ /^(\w+):$/) {
+  next if $line eq '';
+  if($line =~ /^([\w_]+):$/) {
     $label{$1} = scalar @proggie;
   } else {
     push @proggie, $line;
