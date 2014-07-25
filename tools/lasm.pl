@@ -21,7 +21,7 @@ while(my $line = <>) {
   my $line = $_;
   foreach my $label (keys %label) {
     my $linenum = $label{$label};
-    $line =~ s/$label/$linenum/g;
+    $line =~ s/\b$label\b/$linenum/g;
   }
   $line
 } @proggie;
