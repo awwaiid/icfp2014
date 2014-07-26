@@ -127,8 +127,9 @@ sub parse {
   $str =~ s/\b([\w]+)\b/'$1',/gm;
   $str =~ s/]/],/gm;
   $str =~ s/;.*$//gm;
-  # print "EVAL: sexp($str)\n";
   my $output = eval "sexp($str)";
+  # print "EVAL: sexp($str)\n";
+  print "ERROR: $@\n" if $@;
   $output .= $appendix;
   print $output;
   # print $@;
