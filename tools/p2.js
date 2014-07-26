@@ -16,7 +16,7 @@ if (!fs.isReadable(system.args[1]) || !fs.isReadable(system.args[2])) {
 }
 var lambda = fs.read(system.args[1]);
 var map = fs.read(system.args[2]);
-var ghost = fs.read('../bot/ghosts.ghc');
+var ghost = fs.read('bot/ghosts.ghc');
 var ghosts = [ghost, ghost, ghost, ghost];
 var state;
 var broken;
