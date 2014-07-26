@@ -8,40 +8,46 @@ my $functions = {
 };
 our $f = '';
 
+my $appendix = '';
+
 sub def {
   my ($fname, $args, @body) = @_;
+  my $result = "";
   local $f = $fname;
-  print "$fname: ; args: @$args\n";
+  $result .= "$fname: ; args: @$args\n";
   foreach my $n (0..@$args-1) {
-    # print "\$functions->{$fname}{$args->[$n]} = $n;\n";
     $functions->{$fname}{$args->[$n]} = $n;
   }
   foreach my $body (@body) {
-    sexp($body);
+    $result .= sexp($body);
   }
-  print "RTN\n";
+  $result .= "RTN\n";
+  return $result;
 }
 
 sub sexp_arg {
   my ($v) = @_;
+  my $result = "";
   if(ref $v eq 'ARRAY') {
     return sexp(@$v);
   }
   if($v =~ /^\d+$/) {
-    print "LDC $v\n";
+    $result .= "LDC $v\n";
   } elsif(grep { $v eq $_ } keys %{$functions}) {
-    print "LDF $v\n";
+    $result .= "LDF $v\n";
   } elsif(defined $functions->{$f}{$v}) {
     # OK... parameter I guess
-    print "LD 0 " . $functions->{$f}{$v} . "; $f/$v\n";
+    $result .= "LD 0 " . $functions->{$f}{$v} . "; $f/$v\n";
   } else {
-    print "; ERROR $f/$v not found!\n";
-    print Dumper($functions);
+    $result .= "; ERROR $f/$v not found!\n";
+    $result .= Dumper($functions);
   }
+  return $result;
 }
 
 sub apply {
   my ($func, @args) = @_;
+  my $result = "";
 
   if($func eq 'def') {
     return def(@args);
@@ -52,48 +58,53 @@ sub apply {
   }
 
   # First we evaluate the parameters, they go on the stack
-  map { sexp($_) } @args; # evaluate each arg and put them on the stack
+  map { $result .= sexp($_) } @args; # evaluate each arg and put them on the stack
 
   if($func =~ /^[A-Z]+$/) {
     # Built-in function
-    print "$func\n";
+    $result .= "$func\n";
   } else {
     # custom function
-    print "LDF $func\n";
-    print "AP " . (scalar keys %{$functions->{$func}}) . "\n";
+    $result .= "LDF $func\n";
+    $result .= "AP " . (scalar keys %{$functions->{$func}}) . "\n";
   }
+  return $result;
 }
 
 # Translate an sexp to code, result on stack
 sub sexp {
   my (@args) = @_;
+  my $result = "";
 
   foreach my $arg (@args) {
     if(ref $arg eq 'ARRAY') {
-      apply(@$arg);
+      $result .= apply(@$arg);
     } else {
-      sexp_arg($arg);
+      $result .= sexp_arg($arg);
     }
   }
+  return $result;
 }
 
 my $ifnonzero_count = 0;
 sub ifnonzero {
   my ($fname, $cond, $iftrue, $iffalse) = @_;
-  $ifnonzero_count++;
-  sexp($cond);
-  print "SEL iftrue$ifnonzero_count iffalse$ifnonzero_count\n";
-  print "RTN\n";
+  my $result = "";
+  my $count = $ifnonzero_count++;
+  $result .= sexp($cond);
+  $result .= "SEL iftrue$count iffalse$count\n";
 
-  print "iftrue$ifnonzero_count:\n";
-  sexp($iftrue);
-  print "JOIN\n";
+  my $append = "";
+  $append .= "iftrue$count:\n";
+  $append .= sexp($iftrue);
+  $append .= "JOIN\n";
 
-  print "iffalse$ifnonzero_count:\n";
-  sexp($iffalse);
-  print "JOIN\n";
+  $append .= "iffalse$count:\n";
+  $append .= sexp($iffalse);
+  $append .= "JOIN\n";
 
-  return ();
+  $appendix .= $append;
+  return $result;
 }
 
 sub predeclare {
@@ -117,7 +128,9 @@ sub parse {
   $str =~ s/]/],/gm;
   $str =~ s/;.*$//gm;
   # print "EVAL: sexp($str)\n";
-  eval "sexp($str)";
+  my $output = eval "sexp($str)";
+  $output .= $appendix;
+  print $output;
   # print $@;
 }
 

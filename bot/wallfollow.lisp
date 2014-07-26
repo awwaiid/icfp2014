@@ -6,8 +6,11 @@
 (def step (aistate world)
     (ifnonzero (get_my_left world)
       (CONS 0 3)
-      (CONS 0 0))
-)
+      (ifnonzero (get_my_above world)
+        (CONS 0 0)
+        (ifnonzero (get_my_right world)
+          (CONS 0 1)
+          (CONS 0 2)))))
 
 (def map (world)
      (CAR world))
