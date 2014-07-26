@@ -58,7 +58,7 @@ function load () {
     //console.log(JSON.stringify(state));
     printState();
     if (state.error != null) {
-        console.log('Error: " + state.error');
+        console.log("Error: " + state.error);
     }
     else {
         console.log("Program Loaded");
