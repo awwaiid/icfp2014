@@ -53,7 +53,7 @@ sub apply {
     return def(@args);
   }
 
-  if($func eq 'ifnonzero') {
+  if($func eq 'if') {
     return ifnonzero($func, @args);
   }
 
@@ -144,7 +144,7 @@ my $nth = "
 )
 
 (def nth (list n)
-  (ifnonzero n
+  (if n
     (CAR list)
     (nth (CDR list) (SUB n 1))
   )
