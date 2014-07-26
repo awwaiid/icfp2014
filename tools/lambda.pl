@@ -63,6 +63,14 @@ sub apply {
   if($func =~ /^[A-Z]+$/) {
     # Built-in function
     $result .= "$func\n";
+  } elsif(defined $functions->{$f}{$func}) {
+    # OK... parameter I guess
+    my $arity = 0;
+    if($func =~ /(\d+)$/) {
+      $arity = $1;
+    }
+    $result .= "LD 0 " . $functions->{$f}{$func} . "; $f/$func\n";
+    $result .= "AP $arity\n";
   } else {
     # custom function
     $result .= "LDF $func\n";
