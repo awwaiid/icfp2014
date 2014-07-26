@@ -1,12 +1,15 @@
 #!/usr/bin/env perl
 
 use strict;
+use File::Slurp;
 use Data::Dumper;
 
 my $functions = {
   step => {}
 };
 our $f = '';
+
+my $DEBUG = 0;
 
 my $appendix = '';
 
@@ -180,31 +183,18 @@ sub parse {
   $output .= $appendix;
 
   # Disable this line to see the version with labels!
-  $output = resolve_labels($output);
+  if(!$DEBUG) {
+    $output = resolve_labels($output);
+  }
 
-  print $output;
-  # print $@;
+  return $output;
 }
 
-use File::Slurp;
+if($ARGV[0] eq '-d') {
+  $DEBUG = 1;
+  shift @ARGV;
+}
+
 my $proggie = read_file(shift @ARGV);
+print parse($proggie);
 
-my $nth = "
-
-(def id (n)
-  n
-)
-
-(def nth (list n)
-  (if n
-    (CAR list)
-    (nth (CDR list) (SUB n 1))
-  )
-)
-
-(def getxy (matrix x y)
-  (nth (nth matrix y) x)
-)
-";
-
-parse($proggie);
