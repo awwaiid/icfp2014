@@ -73,6 +73,7 @@ sub apply {
     $result .= "AP $arity\n";
   } else {
     # custom function
+    # print Dumper($functions->{$func}) . "\n";
     $result .= "LDF $func\n";
     $result .= "AP " . (scalar keys %{$functions->{$func}}) . "\n";
   }
@@ -115,9 +116,15 @@ sub ifnonzero {
   return $result;
 }
 
+sub includes {
+  my $str = shift;
+  $str =~ s/^\s*INCLUDE "(.*?)"/read_file($1)/gme;
+  return $str;
+}
+
 sub predeclare {
   my $str = shift;
-  my @matches = ($str =~ /\(def (\S+) \((.*)?\)/gm);
+  my @matches = ($str =~ /\(def (\S+) \((.*?)\)/gm);
   while(@matches) {
     my $fname = shift @matches;
     my $p = shift @matches;
@@ -128,8 +135,40 @@ sub predeclare {
   }
 }
 
+sub resolve_labels {
+  my $original = shift;
+  my @lines = split(/\n/, $original);
+
+  my @proggie;
+  my %label;
+
+  while(my $line = shift @lines) {
+    chomp $line;
+    $line =~ s/^\s+//;
+    $line =~ s/\s*;.*$//;
+    next if $line eq '';
+    if($line =~ /^([\w_]+):$/) {
+      $label{$1} = scalar @proggie;
+    } else {
+      push @proggie, $line;
+    }
+  }
+
+  @proggie = map {
+    my $line = $_;
+    foreach my $label (keys %label) {
+      my $linenum = $label{$label};
+      $line =~ s/\b$label\b/$linenum/g;
+    }
+    $line
+  } @proggie;
+
+  return join("\n", @proggie) . "\n";
+}
+
 sub parse {
   my $str = shift;
+  $str = includes($str);
   predeclare($str);
   $str =~ tr/()/[]/;
   $str =~ s/\b([\w]+)\b/'$1',/gm;
@@ -139,6 +178,10 @@ sub parse {
   # print "EVAL: sexp($str)\n";
   print "ERROR: $@\n" if $@;
   $output .= $appendix;
+
+  # Disable this line to see the version with labels!
+  $output = resolve_labels($output);
+
   print $output;
   # print $@;
 }
