@@ -5,7 +5,7 @@ if (!wasSuccessful) {
     console.log('Could not load main game.js library');
     phantom.exit();
 }
-if (system.args.length != 3) {
+if (system.args.length != 4) {
     console.log('Not enough arguments ... ned a lambda and map instruction set');
     phantom.exit();
 }
@@ -14,9 +14,18 @@ if (!fs.isReadable(system.args[1]) || !fs.isReadable(system.args[2])) {
     console.log('Couldnt read one of the input files');
     phantom.exit();
 }
+var ghost;
+var defaultGhost = fs.read('bot/ghosts.ghc');
+if (!fs.isReadable(system.args[3])) {
+    ghost = fs.read(sytem.args[3]); 
+}
+else {
+    ghost = defaultGhost;
+}
+
 var lambda = fs.read(system.args[1]);
 var map = fs.read(system.args[2]);
-var ghost = fs.read('bot/ghosts.ghc');
+
 var ghosts = [ghost, ghost, ghost, ghost];
 var state;
 var broken;
@@ -97,7 +106,7 @@ function printState() {
     var trace = '';
     if (state.traceval != null) {
         for (var index = 0; index < state.traceval.length; ++index) {
-            trace = trace + state.traceval[index];
+            trace = trace + state.traceval[index] . "\n";
         }
         statestr = statestr + trace;
     }
