@@ -1,20 +1,13 @@
 #icfp2014
 
-##Team Name ideas: 
-- Keep Programming Weird
-- Portland Pipers
-- Hack it till you make it
-- Adderol Addicts
-- Performance Enhancing Programming
-- whats your team name
-- Meat Powered Neural Networks
-- Happiness is a warm laptop
-- Caffeine to Code
-- Language Shmanguage
-- Polyglot Pipers
+##Team: Keep Programming Weird
 
 ##Contributors:
 - borbyu
 - awwaiid
 - lungching
+
+##Implementation Notes
+
+We built a LISP translator in perl, which uses regexes to transform LISP into perl data structures and then traverses those. We also adapted the online reference implementation of the game engine into a local command line tool to ease testing.
 
