@@ -47,8 +47,8 @@ sub apply {
     return def(@args);
   }
 
-  if($func eq 'ifzero') {
-    return ifzero($func, @args);
+  if($func eq 'ifnonzero') {
+    return ifnonzero($func, @args);
   }
 
   # First we evaluate the parameters, they go on the stack
@@ -77,26 +77,41 @@ sub sexp {
   }
 }
 
-sub ifzero {
+my $ifnonzero_count = 0;
+sub ifnonzero {
   my ($fname, $cond, $iftrue, $iffalse) = @_;
+  $ifnonzero_count++;
   sexp($cond);
-  print "SEL $fname\_iftrue $fname\_iffalse\n";
+  print "SEL iftrue$ifnonzero_count iffalse$ifnonzero_count\n";
   print "RTN\n";
 
-  print "$fname\_iftrue:\n";
+  print "iftrue$ifnonzero_count:\n";
   sexp($iftrue);
   print "JOIN\n";
 
-  print "$fname\_iffalse:\n";
+  print "iffalse$ifnonzero_count:\n";
   sexp($iffalse);
   print "JOIN\n";
 
   return ();
 }
 
+sub predeclare {
+  my $str = shift;
+  my @matches = ($str =~ /\(def (\S+) \((.*)?\)/gm);
+  while(@matches) {
+    my $fname = shift @matches;
+    my $p = shift @matches;
+    my @args = split(/\s+/, $p);
+    foreach my $n (0..@args-1) {
+      $functions->{$fname}{$args[$n]} = $n;
+    }
+  }
+}
 
 sub parse {
   my $str = shift;
+  predeclare($str);
   $str =~ tr/()/[]/;
   $str =~ s/\b([\w]+)\b/'$1',/gm;
   $str =~ s/]/],/gm;
@@ -116,7 +131,7 @@ my $nth = "
 )
 
 (def nth (list n)
-  (ifzero n
+  (ifnonzero n
     (CAR list)
     (nth (CDR list) (SUB n 1))
   )
