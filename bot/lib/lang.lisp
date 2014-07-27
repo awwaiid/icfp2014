@@ -49,6 +49,12 @@
        list
        (CONS (f (CAR list)) (map (CDR list) f))))
 
+; Like map, but with one param already filled in
+(def map2 (list f x)
+     (if (ATOM list)
+       list
+       (CONS (f x (CAR list)) (map (CDR list) f x))))
+
 (def filter (list f)
      (if (ATOM list)
        list
@@ -56,6 +62,7 @@
          (CONS (CAR list) (filter (CDR list) f))
          (filter (CDR list) f))))
 
+; Like filter, but with one param already filled in
 (def filter2 (list f x)
      (if (ATOM list)
        list
