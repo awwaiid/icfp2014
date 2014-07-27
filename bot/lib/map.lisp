@@ -77,16 +77,16 @@
 (def loc_y (loc)
      (get_y (loc_xy loc)))
 
-(def loc_xy_dist (loc xy)
-     (manhattan_dist xy (loc_xy loc)))
+(def loc_xy_dist (distf loc xy)
+     (distf xy (loc_xy loc)))
 
 ; [loc] -> [(dist,loc)]
-(def loc_list_xy_dist (loc_list xy)
+(def loc_list_xy_dist (distf loc_list xy)
      (if (ATOM loc_list)
        0
        (CONS
-         (CONS (loc_xy_dist (CAR loc_list) xy) (CAR loc_list))
-         (loc_list_xy_dist (CDR loc_list) xy))))
+         (CONS (loc_xy_dist distf (CAR loc_list) xy) (CAR loc_list))
+         (loc_list_xy_dist distf (CDR loc_list) xy))))
 
 ; Coordinates
 ; -----------
