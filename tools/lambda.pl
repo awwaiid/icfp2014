@@ -34,7 +34,7 @@ sub sexp_arg {
   if(ref $v eq 'ARRAY') {
     return sexp(@$v);
   }
-  if($v =~ /^\d+$/) {
+  if($v =~ /^-?\d+$/) {
     $result .= "LDC $v\n";
   } elsif(grep { $v eq $_ } keys %{$functions}) {
     $result .= "LDF $v\n";
@@ -52,12 +52,19 @@ sub apply {
   my ($func, @args) = @_;
   my $result = "";
 
+  # Special form
   if($func eq 'def') {
     return def(@args);
   }
 
+  # Special form
   if($func eq 'if') {
     return ifnonzero($func, @args);
+  }
+
+  # Special form
+  if($func eq 'invoke') {
+    return dynamic_invoke(@args);
   }
 
   # First we evaluate the parameters, they go on the stack
@@ -68,10 +75,10 @@ sub apply {
     $result .= "$func\n";
   } elsif(defined $functions->{$f}{$func}) {
     # OK... parameter I guess
-    my $arity = 0;
-    if($func =~ /(\d+)$/) {
-      $arity = $1;
-    }
+    my $arity = scalar @args;
+    # if($func =~ /(\d+)$/) {
+      # $arity = $1;
+    # }
     $result .= "LD 0 " . $functions->{$f}{$func} . "; $f/$func\n";
     $result .= "AP $arity\n";
   } else {
@@ -117,6 +124,10 @@ sub ifnonzero {
 
   $appendix .= $append;
   return $result;
+}
+
+sub dynamic_invoke {
+  return "AP 1\n";
 }
 
 sub includes {

@@ -1,5 +1,5 @@
 
-(def main (world something)
+(def main (world ghostasm)
      (CONS 0 step))
 
 (def step (aistate world)

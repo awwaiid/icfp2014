@@ -1,14 +1,7 @@
 
 (def main ()
-  (DBUG (is_yummy 2)))
+     (DBUG (manhattan_dist (CONS 5 1) (CONS 4 1))))
 
-(def is_yummy (thing)
-   (DBUG 10002)
-   (DBUG thing)
-     (or 1
-     (or 0
-         0))
-     )
-
+INCLUDE "bot/lib/map.lisp"
 INCLUDE "bot/lib/lang.lisp"
 

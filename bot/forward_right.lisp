@@ -4,12 +4,12 @@
      (CONS 0 step))
 
 (def step (aistate world)
-     (CONS 0 (onestep world)))
+     (CONS aistate (onestep world)))
 
 (def onestep (world)
-    (if (get_lm_forward world) ; Wall forward?
-      (lm_direction world)     ; No, keep going
-      (inc_dir (lm_direction world))))     ; Yes, turn right
+    (if (get_lm_forward world)         ; Wall forward?
+      (lm_direction world)             ; No, keep going
+      (inc_dir (lm_direction world)))) ; Yes, turn right
 
 (def get_lm_forward (world)
      (get_lm_in_dir world (lm_direction world)))
