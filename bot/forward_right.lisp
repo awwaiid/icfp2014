@@ -9,7 +9,7 @@
 (def onestep (world)
     (if (get_lm_forward world)         ; Wall forward?
       (lm_direction world)             ; No, keep going
-      (inc_dir (lm_direction world)))) ; Yes, turn right
+      (right_dir (lm_direction world)))) ; Yes, turn right
 
 (def get_lm_forward (world)
      (get_lm_in_dir world (lm_direction world)))

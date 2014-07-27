@@ -3,7 +3,7 @@
      (CONS 0 step))
 
 (def step (aistate world)
-     (CONS 0 (dir_west)))
+     (CONS aistate (dir_west)))
 
 INCLUDE "bot/lib/dir.lisp"
 

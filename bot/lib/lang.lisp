@@ -84,7 +84,7 @@
         (CAR (CDR args))
         (CAR (CDR (CDR args)))))
 
-(def curry3 (f args)
+(def curry4 (f args)
      (f (CAR args)
         (CAR (CDR args))
         (CAR (CDR (CDR args)))

@@ -36,7 +36,7 @@
 
 ; Find the distance between each available choice and our goal
 (def choices_dist (world destination)
-     (loc_list_xy_dist manhattan_dist (choices_loc world) (CAR (first_pill (world_map world)))))
+     (loc_list_xy_dist manhattan_dist (choices_loc world) destination))
 
 (def min_choice_dist (choice_dists)
      (min_choice_dist_rec choice_dists (CONS 999999999 0)))
