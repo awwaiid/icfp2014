@@ -67,7 +67,7 @@ do
                 break
             fi
             grep -q "Game Over" out.txt && break
-            watch "echo 'press q to quit'; tail -n $mapheight out.txt; sleep .1;"
+            watch -n .1 "echo 'press q to quit'; tail -n $mapheight out.txt;"
         done
         break
     elif [[ $cmd == "l" ]] 
