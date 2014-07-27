@@ -51,6 +51,7 @@ sub sexp_arg {
 sub apply {
   my ($func, @args) = @_;
   my $result = "";
+  my $tailcall = 0;
 
   # Special form
   if($func eq 'def') {
@@ -63,8 +64,24 @@ sub apply {
   }
 
   # Special form
+  if($func eq 'tif') {
+    return ifnonzero_tail($func, @args);
+  }
+
+  # Special form
+  if($func eq 'return') {
+    return early_return(@args);
+  }
+
+  # Special form
   if($func eq 'invoke') {
     return dynamic_invoke(@args);
+  }
+
+  # Explicit tail calls
+  if($func eq 'tailcall') {
+    $func = shift @args;
+    $tailcall = 1;
   }
 
   # First we evaluate the parameters, they go on the stack
@@ -74,18 +91,19 @@ sub apply {
     # Built-in function
     $result .= "$func\n";
   } elsif(defined $functions->{$f}{$func}) {
-    # OK... parameter I guess
+    # OK... function from a parameter
     my $arity = scalar @args;
-    # if($func =~ /(\d+)$/) {
-      # $arity = $1;
-    # }
     $result .= "LD 0 " . $functions->{$f}{$func} . "; $f/$func\n";
     $result .= "AP $arity\n";
   } else {
-    # custom function
+    # custom named function
     # print Dumper($functions->{$func}) . "\n";
     $result .= "LDF $func\n";
-    $result .= "AP " . (scalar keys %{$functions->{$func}}) . "\n";
+    if($tailcall) {
+      $result .= "TAP " . (scalar keys %{$functions->{$func}}) . "\n";
+    } else {
+      $result .= "AP " . (scalar keys %{$functions->{$func}}) . "\n";
+    }
   }
   return $result;
 }
@@ -105,6 +123,16 @@ sub sexp {
   return $result;
 }
 
+sub early_return {
+  my (@body) = @_;
+  my $result = '';
+  foreach my $body (@body) {
+    $result .= sexp($body);
+  }
+  $result .= "RTN\n";
+  return $result;
+}
+
 my $ifnonzero_count = 0;
 sub ifnonzero {
   my ($fname, $cond, $iftrue, $iffalse) = @_;
@@ -121,6 +149,24 @@ sub ifnonzero {
   $append .= "iffalse$count:\n";
   $append .= sexp($iffalse);
   $append .= "JOIN\n";
+
+  $appendix .= $append;
+  return $result;
+}
+
+sub ifnonzero_tail {
+  my ($fname, $cond, $iftrue, $iffalse) = @_;
+  my $result = "";
+  my $count = $ifnonzero_count++;
+  $result .= sexp($cond);
+  $result .= "TSEL iftrue$count iffalse$count\n";
+
+  my $append = "";
+  $append .= "iftrue$count:\n";
+  $append .= sexp($iftrue);
+
+  $append .= "iffalse$count:\n";
+  $append .= sexp($iffalse);
 
   $appendix .= $append;
   return $result;
