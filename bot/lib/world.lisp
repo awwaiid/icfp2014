@@ -10,6 +10,9 @@
 (def lm_location (world)
      (CAR (CDR (lm_status world))))
 
+(def lm_loc (world)
+     (CONS (lm_location world) 0))
+
 (def lm_x (world)
      (CAR (lm_location world)))
 

@@ -56,6 +56,14 @@
          (CONS (CAR list) (filter (CDR list) f))
          (filter (CDR list) f))))
 
+(def filter2 (list f x)
+     (if (ATOM list)
+       list
+       (if (f x (CAR list))
+         (CONS (CAR list) (filter2 (CDR list) f x))
+         (filter2 (CDR list) f x))))
+
+
 (def map_partial (list f)
      (if (ATOM list)
        list
