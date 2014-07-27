@@ -1,0 +1,25 @@
+and c,1 ; this is our control for going east-west vs north-south
+int 1
+mov h,a ; lm x
+mov g,b ; lm y
+int 3
+int 5
+mov f,a ; gh x
+mov e,b ; gh y
+jeq 18,c,1 ; go north-south check path
+mov c,1 ; do north-south next time
+jlt 15,h,f ; go to determine east or west
+mov a,1 ; needs to go east
+int 0
+hlt
+mov a,3 ; needs to go west
+int 0
+hlt
+mov c,0 ; do east-west next time
+jlt 23,g,e ; go to determine north or south
+mov a,2 ; going south
+int 0
+hlt
+mov a,0 ; going north
+int 0
+hlt
