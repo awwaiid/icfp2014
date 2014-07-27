@@ -70,15 +70,16 @@ function printState() {
     var trace = '';
     if (state.traceval != null) {
         for (var index = 0; index < state.traceval.length; ++index) {
-            trace = trace + state.traceval[index];
+            trace = trace + state.traceval[index] + "\n";
         }
-        statestr = statestr + trace;
+        //statestr = statestr + trace;
     }
     
     console.log(statestr);
     console.log("------");
     console.log(formatBoard(state.board, state.gameboard));
     console.log("------");
+    console.log(trace);
 }
 
 function formatBoard(board, gameboard) {
