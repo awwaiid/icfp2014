@@ -19,3 +19,26 @@
 (def lm_direction (world)
      (CAR (CDR (CDR (lm_status world)))))
 
+(def ghosts_status (world)
+     (CAR (CDR (CDR world))))
+
+(def ghost_location (ghost)
+    (CAR (CDR (ghost))))
+
+(def ghost_x (ghost)
+     (CAR (ghost_location)))
+
+(def ghost_y (ghost)
+     (CDR (ghost_location)))
+
+(def ghost_vit (ghost)
+     (CAR (ghost)))
+
+(def ghost_dir (ghost)
+     (CDR (CDR (ghost))))
+
+(def ghost_near (world)
+     (filter (ghost_status world) (check_ghost lm_x lm_y)))
+
+; (def check_ghost (lm_x lm_y)
+
