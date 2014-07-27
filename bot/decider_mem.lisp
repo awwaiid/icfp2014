@@ -4,16 +4,18 @@
      (CONS 0 step))
 
 (def step (aistate world)
-     (CONS 0 (onestep world)))
+     (CONS
+       (CONS (lm_location) aistate)
+       (onestep world aistate)))
 
 ; Keep moving forward
 ; When we have a choice, choose wisely
-(def onestep (world)
+(def onestep (world xy_history)
      (if (CEQ (choice_count world) 0)
        (lm_backward_dir world)
        (if (CEQ (choice_count world) 1)
          (only_choice world)
-         (best_choice world))))
+         (best_choice world xy_history))))
 
 (def only_choice (world)
      (CAR (choices world)))
@@ -38,16 +40,20 @@
 (def choices_dist (world destination)
      (loc_list_xy_dist manhattan_dist (choices_loc world) (CAR (first_pill (world_map world)))))
 
-(def min_choice_dist (choice_dists)
-     (min_choice_dist_rec choice_dists (CONS 999999999 0)))
+(def min_choice_dist (choice_dists xy_history)
+     (min_choice_dist_rec xy_history choice_dists (CONS 999999999 0)))
 
-(def min_choice_dist_rec (choice_dists best)
-     (tif (ATOM choice_dists)
-       (return best)
-       (tif (CGT (CAR (CAR choice_dists)) (CAR best))
-         (tailcall min_choice_dist_rec (CDR choice_dists) best)
-         (tailcall min_choice_dist_rec (CDR choice_dists) (CAR choice_dists)))))
+(def min_choice_dist_rec (xy_history choice_dists best)
+     (if (ATOM choice_dists)
+       best
+       (if (CGT (CAR (CAR choice_dists)) (CAR best))
+         (min_choice_dist_rec (CDR choice_dists) best)
+         (min_choice_dist_rec (CDR choice_dists) (CAR choice_dists)))))
 
+(def weighted_dist (choice_dist xy_history)
+     (filter xy_history (partial p_xy_eq (CAR (CDR choice_dist))))
+
+(def p_xy_eq (args) (curry2 xy_eq args))
 
 ; awwaiid: I don't like this maybe_ blah blah
 (def choices (world)

@@ -21,15 +21,28 @@
 
 ; List stuff
 ; ----------
+; (def nth (list n)
+  ; (if n
+    ; (nth (CDR list) (SUB n 1))
+    ; (CAR list))) 
+
 (def nth (list n)
-  (if n
-    (nth (CDR list) (SUB n 1))
-    (CAR list))) 
+  (tif n
+    (tailcall nth (CDR list) (SUB n 1))
+    (return (CAR list))))
+
+; (def length (list)
+  ; (if (ATOM list)
+    ; 0
+    ; (ADD 1 (length (CDR list)))))
 
 (def length (list)
-  (if (ATOM list)
-    0
-    (ADD 1 (length (CDR list)))))
+     (length_rec list 0))
+
+(def length_rec (list n)
+  (tif (ATOM list)
+    (return n)
+    (tailcall length_rec (CDR list) (ADD n 1))))
 
 (def map (list f)
      (if (ATOM list)
@@ -59,3 +72,20 @@
      (CAR p)
      (invoke))
 
+(def curry1 (f args)
+     (f (CAR args)))
+
+(def curry2 (f args)
+     (f (CAR args)
+        (CAR (CDR args))))
+
+(def curry3 (f args)
+     (f (CAR args)
+        (CAR (CDR args))
+        (CAR (CDR (CDR args)))))
+
+(def curry3 (f args)
+     (f (CAR args)
+        (CAR (CDR args))
+        (CAR (CDR (CDR args)))
+        (CAR (CDR (CDR (CDR args))))))

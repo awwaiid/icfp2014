@@ -77,16 +77,16 @@
 (def loc_y (loc)
      (get_y (loc_xy loc)))
 
-(def loc_xy_dist (loc xy)
-     (manhattan_dist xy (loc_xy loc)))
+(def loc_xy_dist (distf loc xy)
+     (distf xy (loc_xy loc)))
 
 ; [loc] -> [(dist,loc)]
-(def loc_list_xy_dist (loc_list xy)
+(def loc_list_xy_dist (distf loc_list xy)
      (if (ATOM loc_list)
        0
        (CONS
-         (CONS (loc_xy_dist (CAR loc_list) xy) (CAR loc_list))
-         (loc_list_xy_dist (CDR loc_list) xy))))
+         (CONS (loc_xy_dist distf (CAR loc_list) xy) (CAR loc_list))
+         (loc_list_xy_dist distf (CDR loc_list) xy))))
 
 ; Coordinates
 ; -----------
@@ -94,8 +94,41 @@
 (def get_x (xy) (CAR xy))
 (def get_y (xy) (CDR xy))
 
+(def xy_eq (xy1 xy2)
+     (and (CEQ (get_x xy1) (get_x xy2))
+          (CEQ (get_y xy1) (get_y xy2))))
+
+; Distance and Paths
+; ------------------
+
 (def manhattan_dist (xy1 xy2)
      (ADD (abs (SUB (get_x xy1) (get_x xy2)))
           (abs (SUB (get_y xy1) (get_y xy2)))))
 
+
+; A* Algorithm
+; create the open list of nodes, initially containing only our starting node
+; create the closed list of nodes, initially empty
+; while (we have not reached our goal) {
+   ; consider the best node in the open list (the node with the lowest f value)
+   ; if (this node is the goal) {
+       ; then we're done
+   ; }
+   ; else {
+       ; move the current node to the closed list and consider all of its neighbors
+       ; for (each neighbor) {
+           ; if (this neighbor is in the closed list and our current g value is lower) {
+               ; update the neighbor with the new, lower, g value 
+               ; change the neighbor's parent to our current node
+           ; }
+           ; else if (this neighbor is in the open list and our current g value is lower) {
+               ; update the neighbor with the new, lower, g value 
+               ; change the neighbor's parent to our current node
+           ; }
+           ; else this neighbor is not in either the open or closed list {
+               ; add the neighbor to the open list and set its g value
+           ; }
+       ; }
+   ; }
+; }
 
