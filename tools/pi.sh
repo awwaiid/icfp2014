@@ -4,10 +4,13 @@ lambda_bot=$1
 map=$2
 ghost=$3
 
+mapheight=$(cat $2 | wc -l)
+mapheight=`expr $mapheight + 9`
+
 pipe=/tmp/testpipe
 phantom_bin=/usr/bin/phantomjs
 
-trap "rm -f $pipe" EXIT
+trap "rm -f $pipe; killall tail; killall phantomjs >> error.txt 2>&1; exit" EXIT
 
 if [[ ! -p $pipe ]]; then
     mkfifo $pipe
@@ -17,7 +20,8 @@ clear
 echo "Start the game? [ENTER]"
 read
 echo "" > out.txt
-tail -f $pipe | $phantom_bin 1>>out.txt 2> error.txt  & 
+tail -f $pipe | $phantom_bin >> out.txt 2> error.txt  & 
+
 echo "var system = require('system'), fs = require('fs');" > $pipe
 echo "phantom.injectJs('tools/game.js');" > $pipe
 echo "phantom.injectJs('tools/p2.helper.js');" > $pipe
@@ -30,10 +34,9 @@ echo "var broken;" > $pipe
 echo "var counter = 0;" > $pipe
 echo "load(lambda,map,ghosts);" > $pipe
 
-#echo "catting out"
 while : ; do
     grep -q "Program Loaded" out.txt && break
-    echo "."
+    echo -n "."
     sleep .1
 done
 cat out.txt | grep -v 'phantomjs' | grep -v 'undefined';
@@ -41,31 +44,44 @@ echo "" > out.txt
 
 while true; 
 do
-    echo "s for step, l for loop, anything else for quit"; read -n 1 cmd;
+    echo "s for step, l for loop, a for animate, anything else for quit"; read -n 1 cmd;
     if [[ $cmd == "s" ]]
     then
         clear
         echo "runStep();" > $pipe
         while : ; do
             grep -q "State" out.txt && break
-            echo "."
+            echo -n "."
             sleep .1
         done
         cat out.txt | grep -v 'phantomjs' | grep -v 'undefined';
         echo "" > out.txt
+    elif [[ $cmd == "a" ]] 
+    then
+        clear
+        echo "runLoop();" > $pipe
+        while : ; do
+            read -t 1 -n 1 key
+            if [[ $key = q ]]
+            then
+                break
+            fi
+            grep -q "Game Over" out.txt && break
+            watch "echo 'press q to quit'; tail -n $mapheight out.txt; sleep .1;"
+        done
+        break
     elif [[ $cmd == "l" ]] 
     then
         clear
         echo "runLoop();" > $pipe
-        #while ![ grep -q "Game Over" "out.txt"]; do echo "sleeping"; sleep 2; done
         while : ; do
             grep -q "Game Over" out.txt && break
-            echo "."
+            echo $mapheight
+            echo -n "."
+            tail -n $mapheight -f out.txt 
             sleep .1
         done
-        
         cat out.txt | grep -v 'phantomjs' | grep -v 'undefined';
-        echo "" > out.txt
         break
     else 
         clear
