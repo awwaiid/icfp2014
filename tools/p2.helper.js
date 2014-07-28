@@ -87,15 +87,33 @@ function formatBoard(board, gameboard) {
     var y = board.length;
     var x = board[0].length;
     var map ={0:'#',1:' ',2:'.',3:'o',4:'F',5:'\\',6:'/',7:'=',8:'=',9:'=',10:'=',11:'=',12:':'};
-    var outStr = '';
+    var outStr = '   ';
+    for (var l = 0; l < x; l++) {
+        var t = l;
+        if (t % 10 == 0 && t > 0) outStr = outStr + (t / 10);
+        else outStr = outStr + ' ';
+    }
+    outStr = outStr + "\n";
+    outStr = outStr + '   ';
+    for (var k = 0; k < x; k++) {
+        var t = k;
+        if (t >= 10) t = t % 10;
+        outStr = outStr + t;
+    }
+    outStr = outStr + "\n";
     for (var j = 0; j < y; j++) {
         for (var i = 0; i < x; i++) {
             var charAt = i + (y * j);
             var tileNo = board[j][i];
             //console.log (i + " " + j + " " + tileNo + " " + map[tileNo]);
             //console.log (i + " " + j + " " + charAt + " " + gameboard.charAt(charAt));
+            if (i == 0) {
+                var offset = j < 10 ? '  ' : ' '; 
+                outStr = outStr + j + offset;
+            }
             outStr = outStr + map[tileNo];            
         }
+        
         outStr = outStr + "\n";
     }
     return outStr;

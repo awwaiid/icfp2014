@@ -92,6 +92,7 @@ do
         clear
         echo "runLoop();" > $pipe
         while : ; do
+            #read -t 1 -n 1 key && [[$key == "q"]] && break
             grep -q "Game Over" out.txt && break
             echo $mapheight
             echo -n "."
