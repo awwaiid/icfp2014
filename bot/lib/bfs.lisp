@@ -4,41 +4,42 @@
 
 ; Returns a path, which is a list of locs from origin_loc to goal_loc
 ; So, (CAR result) is the origin_loc, (CAR (CDR result)) is the next step, etc
-(def bfs (board origin_loc goal_loc)
+(def bfs (board origin_loc goal_condition)
      ; (DBUG 10000)
      (reverse
        (bfs_engine
          board
          (bfs_initial_path_list origin_loc) ; path_list
          (CONS origin_loc 0)                ; seen locs
-         goal_loc)))
+         goal_condition)))
 
 (def bfs_initial_path_list (origin_loc)
      ; (DBUG 10001)
      (CONS (CONS origin_loc 0) 0))
 
-(def bfs_engine (board path_list seen goal_loc)
+(def bfs_engine (board path_list seen goal_condition)
      ; (DBUG 10002)
      ; (DBUG path_list)
      (if (ATOM path_list)
        0 ; No paths exist!
-       (if (loc_xy_equal (bfs_cur_loc (bfs_cur_path path_list)) goal_loc)
+       ; (if (loc_xy_equal (bfs_cur_loc (bfs_cur_path path_list)) goal_condition)
+       (if (goal_condition (bfs_cur_loc (bfs_cur_path path_list)))
          (bfs_cur_path path_list) ; we found the shotest path!
          (bfs_add_paths
            board
            path_list
            seen
-           goal_loc
+           goal_condition
            (bfs_expand_path board seen (bfs_cur_path path_list))))))
 
-(def bfs_add_paths (board path_list seen goal_loc new_paths)
+(def bfs_add_paths (board path_list seen goal_condition new_paths)
      ; (DBUG 10003)
      ; (DBUG new_paths)
      (bfs_engine
        board
        (append (CDR path_list) new_paths)  ; Add to the end of our queue
        (append (bfs_locs new_paths) seen) ; Add to our seen locs
-       goal_loc))
+       goal_condition))
 
 ; Get the last loc from each path
 (def bfs_locs (path_list)
