@@ -5,7 +5,7 @@ map=$2
 ghost=$3
 
 mapheight=$(cat $2 | wc -l)
-mapheight=`expr $mapheight + 9`
+mapheight=`expr $mapheight + 11`
 
 pipe=/tmp/testpipe
 phantom_bin=/usr/bin/phantomjs
@@ -44,14 +44,14 @@ echo "" > out.txt
 
 while true; 
 do
-    echo "s for step, l for loop, a for animate, anything else for quit"; read -n 1 cmd;
+    echo "s for step, d for debug, l for loop, a for animate, anything else for quit"; read -n 1 cmd;
     if [[ $cmd == "s" ]]
     then
         clear
         echo "runStep();" > $pipe
         while : ; do
             grep -q "State" out.txt && break
-            echo -n "."
+            # echo -n "."
             sleep .1
         done
         cat out.txt | grep -v 'phantomjs' | grep -v 'undefined';
@@ -70,6 +70,23 @@ do
             watch -n .1 "echo 'press q to quit'; tail -n $mapheight out.txt;"
         done
         break
+    elif [[ $cmd == "d" ]] 
+    then
+        while : ; do 
+            grep -q "trace lambdaman" out.txt && break
+            echo "" > out.txt
+            clear
+            echo "runStep();" > $pipe
+            while : ; do
+                grep -q "State" out.txt && break
+                echo -n "."
+                #sleep .1
+            done
+        clear
+        tail -n $mapheight out.txt | grep -v 'phantomjs' | grep -v 'undefined';
+        done
+        echo "" > out.txt
+        
     elif [[ $cmd == "l" ]] 
     then
         clear
