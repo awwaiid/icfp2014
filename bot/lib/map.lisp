@@ -103,6 +103,11 @@
 (def loc_y (loc)
      (get_y (loc_xy loc)))
 
+(def loc_xy_equal (loc1 loc2)
+     (and
+       (CEQ (loc_x loc1) (loc_x loc2))
+       (CEQ (loc_y loc1) (loc_y loc2))))
+
 (def loc_xy_dist (distf loc xy)
      (distf xy (loc_xy loc)))
 
