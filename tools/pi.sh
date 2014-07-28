@@ -73,7 +73,7 @@ do
     elif [[ $cmd == "d" ]] 
     then
         while : ; do 
-            grep -q "trace lambdaman" out.txt && break
+            grep -q "lambdaman" out.txt && break
             echo "" > out.txt
             clear
             echo "runStep();" > $pipe

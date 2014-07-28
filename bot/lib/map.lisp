@@ -27,6 +27,18 @@
 (def get_west (matrix x y)
   (getxy matrix (SUB x 1) y ))
 
+(def get_north_loc (matrix x y)
+    (CONS (CONS x (SUB y 1)) (get_north matrix x y)))
+
+(def get_south_loc (matrix x y)
+    (CONS (CONS x (ADD y 1)) (get_south matrix x y)))
+
+(def get_west_loc (matrix x y)
+    (CONS (CONS (SUB x 1) y) (get_west matrix x y)))
+
+(def get_east_loc (matrix x y)
+    (CONS (CONS (ADD x 1) y) (get_east matrix x y)))
+
 (def get_dir_xy (matrix x y dir)
      (if (CEQ dir 0) (CONS x (SUB y 1))
      (if (CEQ dir 1) (CONS (ADD x 1) y)
@@ -38,7 +50,7 @@
      (if (CEQ dir 1) (get_east  matrix x y)
      (if (CEQ dir 2) (get_south matrix x y)
                      (get_west  matrix x y)))))
-
+; this is not a loc
 (def get_dir_loc (matrix x y dir)
      (CONS 
        (if (CEQ dir 0) (CONS x (SUB y 1))
@@ -87,6 +99,14 @@
        (CONS
          (CONS (loc_xy_dist distf (CAR loc_list) xy) (CAR loc_list))
          (loc_list_xy_dist distf (CDR loc_list) xy))))
+
+; get adjacent locs
+(def adjacent_locs (board x y) 
+    (CONS (get_north_loc board x y) 
+        (CONS (get_east_loc board x y)
+            (CONS (get_south_loc board x y)
+                (CONS (get_west_loc board x y) 
+                    0)))))
 
 ; Coordinates
 ; -----------

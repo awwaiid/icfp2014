@@ -4,6 +4,18 @@
 (def world_map (world)
      (CAR world))
 
+(def world_width (world)
+    (length (CAR (world_map world))))
+
+(def world_height (world)
+    (length (world_map world)))
+
+(def world_middle_height (world)
+     (DIV (world_height world) 2))
+
+(def world_middle_width (world)
+     (DIV (world_width world) 2))
+
 (def lm_status (world)
      (CAR (CDR world)))
 
