@@ -48,7 +48,7 @@
     (tailcall length_rec (CDR list) (ADD n 1))))
 
 (def reverse (list)
-     (reverse_rec 0 list))
+     (reverse_rec list 0))
 
 (def reverse_rec (list result)
      (tif (ATOM list)
