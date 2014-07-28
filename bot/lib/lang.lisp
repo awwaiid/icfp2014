@@ -53,7 +53,7 @@
 (def map2 (list f x)
      (if (ATOM list)
        list
-       (CONS (f x (CAR list)) (map (CDR list) f x))))
+       (CONS (f x (CAR list)) (map2 (CDR list) f x))))
 
 (def filter (list f)
      (if (ATOM list)
