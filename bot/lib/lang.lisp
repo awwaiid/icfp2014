@@ -8,12 +8,14 @@
 
 ; LOGIC!
 ; ------
+
 (def and (a b) (if a b a))
 (def or (a b) (if a a b))
 (def not (a) (if a 0 1))
 
 ; Math
 ; ----
+
 (def abs (n)
      (if (CGT 0 n)
        (MUL n -1)
@@ -24,20 +26,36 @@
 
 ; List stuff
 ; ----------
-; (def nth (list n)
-  ; (if n
-    ; (nth (CDR list) (SUB n 1))
-    ; (CAR list))) 
 
+; Somtimes you need to CONS the other way around, with the list first
+(def consr (list thing) (CONS thing list))
+
+; Function references
+(def cons (element list) (CONS element list))
+(def car  (list)         (CAR list))
+(def cdr  (list)         (CDR list))
+
+; Fancy caddr type stuff
+(def caar (list) (CAR (CAR list)))
+(def cadr (list) (CAR (CDR list)))
+(def cdar (list) (CDR (CAR list)))
+(def cddr (list) (CDR (CDR list)))
+
+(def caaar (list) (CAR (CAR (CAR list))))
+(def caadr (list) (CAR (CAR (CDR list))))
+(def cadar (list) (CAR (CDR (CAR list))))
+(def caddr (list) (CAR (CDR (CDR list))))
+
+(def cdaar (list) (CDR (CAR (CAR list))))
+(def cdadr (list) (CDR (CAR (CDR list))))
+(def cddar (list) (CDR (CDR (CAR list))))
+(def cdddr (list) (CDR (CDR (CDR list))))
+
+; Get the nth entry in a list
 (def nth (list n)
   (tif n
     (tailcall nth (CDR list) (SUB n 1))
     (return (CAR list))))
-
-; (def length (list)
-  ; (if (ATOM list)
-    ; 0
-    ; (ADD 1 (length (CDR list)))))
 
 (def length (list)
      (length_rec list 0))
@@ -55,6 +73,21 @@
           (return result)
           (tailcall reverse_rec (CDR list) (CONS (CAR list) result))))
 
+; This ends up being the combination of (reverse list1) and list
+(def combine (list1 list2)
+     (if (ATOM list1)
+       list2
+       (combine (CDR list1) (CONS (CAR list1) list2))))
+
+; Create a flattened out (list1 list2) without breaking the order of list1
+(def append (list1 list2)
+     (combine (reverse list1) list2))
+
+(def append_item (list item)
+     (reverse (CONS item (reverse list))))
+
+; Given a list and a function (f), take each element in the list,
+; call (f element), and make that into a new list
 (def map (list f)
      (if (ATOM list)
        list
@@ -82,6 +115,8 @@
        (return result)
        (tailcall map_reverse2_rec (CDR list) (CONS (f x (CAR list)) result) f x)))
 
+; Given a list and a boolean function, only keep the elements that return true
+; from the function
 (def filter (list f)
      (if (ATOM list)
        list
@@ -97,7 +132,7 @@
          (CONS (CAR list) (filter2 (CDR list) f x))
          (filter2 (CDR list) f x))))
 
-
+; This was craycray
 (def map_partial (list f)
      (if (ATOM list)
        list
