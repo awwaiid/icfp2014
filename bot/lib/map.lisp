@@ -63,6 +63,20 @@
 ; loc = ((x,y), content)
 ; ----------------------
 
+; returns integer dir value
+; loc 1 = source
+; loc 2 = destination
+(def loc_to_loc_dir (loc1 loc2)
+    (if (CGT (distance_eastwest loc1 loc2) (distance_northsouth loc1 loc2))
+        (if (CGT (loc_x loc1) (loc_x loc2)) (dir_west) (dir_east))
+        (if (CGT (loc_y loc1) (loc_y loc2)) (dir_north) (dir_south))))
+           
+(def distance_eastwest (loc1 loc2)
+    (abs (SUB (loc_x loc1) (loc_x loc2))))
+
+(def distance_northsouth (loc1 loc2)
+    (abs (SUB (loc_y loc1) (loc_y loc2))))
+
 (def to_loc_list_rec (matrix x y)
      (if (ATOM matrix)
        0
