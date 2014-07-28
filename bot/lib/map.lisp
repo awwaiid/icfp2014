@@ -5,6 +5,7 @@
 (def wall       () 0)
 (def pill       () 2)
 (def power_pill () 3)
+(def fruit      () 4)
 
 ; Matrix stuff
 ; ------------
