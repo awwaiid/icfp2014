@@ -22,14 +22,9 @@
 (def best_choice (world)
      (CDR (CDR (min_choice_dist (choices_dist world (first_pill_xy world))))))
 
-; Sorry about the partial stuff
 ; Turn choices (directions) into a list of [ (x,y), direction ]
 (def choices_loc (world)
-     (map_partial (choices world) (partial choice_loc_world (CONS world 0))))
-
-; Unwrap the world partial (world, choice)
-(def choice_loc_world (args)
-     (choice_loc (CAR (CDR args)) (CAR args)))
+     (map2 (choices world) choice_loc world))
 
 (def choice_loc (world choice)
      (get_dir_loc (world_map world) (lm_x world) (lm_y world) choice))
