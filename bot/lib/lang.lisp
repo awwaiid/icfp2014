@@ -19,6 +19,9 @@
        (MUL n -1)
        n))
 
+(def mod (n base)
+     (SUB n (MUL (DIV n base) base)))
+
 ; List stuff
 ; ----------
 ; (def nth (list n)
@@ -44,6 +47,14 @@
     (return n)
     (tailcall length_rec (CDR list) (ADD n 1))))
 
+(def reverse (list)
+     (reverse_rec 0 list))
+
+(def reverse_rec (list result)
+     (tif (ATOM list)
+          (return result)
+          (tailcall reverse_rec (CDR list) (CONS (CAR list) result))))
+
 (def map (list f)
      (if (ATOM list)
        list
@@ -54,6 +65,22 @@
      (if (ATOM list)
        list
        (CONS (f x (CAR list)) (map2 (CDR list) f x))))
+
+(def map_reverse (list f)
+     (map_reverse_rec list 0 f))
+
+(def map_reverse_rec (list result f)
+     (tif (ATOM list)
+       (return result)
+       (tailcall map_reverse_rec (CDR list) (CONS (f (CAR list)) result) f)))
+
+(def map_reverse2 (list f x)
+     (map_reverse2_rec list 0 f x))
+
+(def map_reverse2_rec (list result f x)
+     (tif (ATOM list)
+       (return result)
+       (tailcall map_reverse2_rec (CDR list) (CONS (f x (CAR list)) result) f x)))
 
 (def filter (list f)
      (if (ATOM list)
@@ -77,6 +104,7 @@
        (CONS (apply f (CAR list)) (map_partial (CDR list) f))))
 
 ; Meta
+; It turns out that we don't need these very much if we use map2
 ; ----
 
 (def partial (f args)
@@ -104,3 +132,4 @@
         (CAR (CDR args))
         (CAR (CDR (CDR args)))
         (CAR (CDR (CDR (CDR args))))))
+
